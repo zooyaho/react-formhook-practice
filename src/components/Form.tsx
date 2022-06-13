@@ -38,27 +38,33 @@ interface IForm {
   username: string;
   password: string;
   password1: string;
+  extraError?: string;
 }
 
-const Form = () => {
+const ToDoList = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError // 특정한 에러를 발생시킴.
   } = useForm<IForm>({
     defaultValues: {
       email: "@naver.com",
     },
   });
-  const onValid = (data: any) => {
+  const onValid = (data: IForm) => {
     // 이 함수는 react-hook-form이 모든 validation을 다 마쳤을때만 호출 됨.
-    console.log(data);
+    if (data.password !== data.password1) {
+      setError("password1", { message: "Password are not the same" }, { shouldFocus: true });
+    }
+    // 전체 폼에 대한 에러, ex) 누군가 서버를 해킹해서, 서버가 다운되어 접속이 끊길경우
+    // setError("extraError", { message: "Server Offline." });
   };
   console.log(errors);
   return (
     <div>
       <form style={{ display: "flex", flexDirection: "column", marginTop: "100px" }} onSubmit={handleSubmit(onValid)}>
-      <input
+        <input
           {...register("email", {
             required: "Email is required",
             pattern: {
@@ -68,27 +74,42 @@ const Form = () => {
           })}
           placeholder="Email"
         />
-        <span style={{color:"tomato"}}>{errors?.email?.message}</span>
+        <span>{errors?.email?.message}</span>
         <input
-          {...register("firstName", { required: "write here" })}
+          {...register("firstName", {
+            required: "write here", validate: {
+              noMark: (value) => value.includes("mark") ? "no mark allowed" : true,
+              noLee: (value) => value.includes("lee") ? "no mark allowed" : true
+            }
+          })}
           placeholder="First Name"
         />
-        <span style={{color:"tomato"}}>{errors?.firstName?.message}</span>
+        <span>{errors?.firstName?.message}</span>
         <input
           {...register("lastName", { required: "write here" })}
           placeholder="Last Name"
         />
-        <span style={{color:"tomato"}}>{errors?.lastName?.message}</span>
+        <span>{errors?.lastName?.message}</span>
         <input
-          {...register("username", { required: "write here", minLength: 10 })}
+          {...register("username", {
+            required: "write here", minLength: {
+              value: 6,
+              message: "Your user name is too short.",
+            }
+          })}
           placeholder="Username"
         />
-        <span style={{color:"tomato"}}>{errors?.username?.message}</span>
+        <span>{errors?.username?.message}</span>
         <input
-          {...register("password", { required: "write here", minLength: 5 })}
+          {...register("password", {
+            required: "write here", minLength: {
+              value: 5,
+              message: "Your password is too short.",
+            },
+          })}
           placeholder="Password"
         />
-        <span style={{color:"tomato"}}>{errors?.password?.message}</span>
+        <span>{errors?.password?.message}</span>
         <input
           {...register("password1", {
             required: "Password is required",
@@ -99,10 +120,11 @@ const Form = () => {
           })}
           placeholder="Password1"
         />
-        <span style={{color:"tomato"}}>{errors?.password1?.message}</span>
+        <span>{errors?.password1?.message}</span>
         <button>Add</button>
+        <span>{errors?.extraError?.message}</span>
       </form>
     </div>
   );
 };
-export default Form;
+export default ToDoList;
