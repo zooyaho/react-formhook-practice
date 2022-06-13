@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 
 /*
 const ToDoList = () => {
-  const [value, setValue] = useState("");
   const [toDo, setToDo] = useState("");
+  const [toDoError, setToDoError] = useState("");
   const changeHadler = (event: React.FormEvent<HTMLInputElement>) => {
     const {
       currentTarget: { value },
@@ -22,7 +22,7 @@ const ToDoList = () => {
   return (
     <div>
       <form onSubmit={submitHandler}>
-        <input value={value} onChange={changeHadler} placeholder="Write a to do" />
+        <input value={toDo} onChange={changeHadler} placeholder="Write a to do" />
         <button>Add</button>
         {toDoError !== "" ? toDoError : null}
       </form>
